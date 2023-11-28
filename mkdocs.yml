@@ -1,4 +1,4 @@
-site_name: MkDocs YouTube Tutorial
+site_name: ML Blog
 site_url: https://mauriciolucas22.github.io/blog
 theme:
   name: material
@@ -28,7 +28,7 @@ theme:
         icon: material/brightness-7
         name: Switch to dark mode
 
-    # Palette toggle for dark mode
+    # Palette toggle for dark mode (default)
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       toggle:
