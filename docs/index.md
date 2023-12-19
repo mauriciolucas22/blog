@@ -1,68 +1,109 @@
-# Homepage
+# Ollama Colab
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Code Annotation Examples
+## Running ollama colab with persistent models in drive folder
 
 ### Codeblocks
 
 Some `code` goes here.
 
-### Plain codeblock
+### Insert colde bellow in you colab google
 
-A plain codeblock:
+Mount your drive:
 
-```
-Some code here
-def myfunction()
-// some comment
-```
-
-#### Code for a specific language
-
-Some more code with the `py` at the start:
-
-``` py
-import tensorflow as tf
-def whatever()
+```py
+from google.colab import drive
+drive.mount('/content/drive')
 ```
 
-#### With a title
+#### Install ollama
 
-``` py title="bubble_sort.py"
-def bubble_sort(items):
-    for i in range(len(items)):
-        for j in range(len(items) - 1 - i):
-            if items[j] > items[j + 1]:
-                items[j], items[j + 1] = items[j + 1], items[j]
+```shell
+# Download and run the Ollama Linux install script
+!curl https://ollama.ai/install.sh | sh
+!command -v systemctl >/dev/null && sudo systemctl stop ollama
 ```
 
-#### With line numbers
+#### Mount path and create symbolic link
 
-``` py linenums="1"
-def bubble_sort(items):
-    for i in range(len(items)):
-        for j in range(len(items) - 1 - i):
-            if items[j] > items[j + 1]:
-                items[j], items[j + 1] = items[j + 1], items[j]
+```shell title="Change path to you choose"
+!mkdir -p ~/.ollama/models && rm -rf ~/.ollama/models
+!ln -s /content/drive/MyDrive/LLMs/ollama/models/ ~/.ollama/models
+```
+
+#### List mounted folder
+
+```py
+!ls ~/.ollama/models/
+```
+
+### Star ollama serve with ngrok
+
+```py title="get ngrok url"
+!pip install aiohttp pyngrok
+
+import os
+import asyncio
+from aiohttp import ClientSession
+
+# Set LD_LIBRARY_PATH so the system NVIDIA library becomes preferred
+# over the built-in library. This is particularly important for
+# Google Colab which installs older drivers
+os.environ.update({'LD_LIBRARY_PATH': '/usr/lib64-nvidia'})
+
+async def run(cmd):
+  '''
+  run is a helper function to run subcommands asynchronously.
+  '''
+  print('>>> starting', *cmd)
+  p = await asyncio.subprocess.create_subprocess_exec(
+      *cmd,
+      stdout=asyncio.subprocess.PIPE,
+      stderr=asyncio.subprocess.PIPE,
+  )
+
+  async def pipe(lines):
+    async for line in lines:
+      print(line.strip().decode('utf-8'))
+
+  await asyncio.gather(
+      pipe(p.stdout),
+      pipe(p.stderr),
+  )
+
+
+await asyncio.gather(
+    run(['ollama', 'serve']),
+    run(['ngrok', 'http', '--log', 'stderr', '11434']),
+)
+
+# OUTPUT ngrok URL like https://1563-34-142-213-114.ngrok.io
+```
+
+### GET URL OUTPUT
+
+> URL output like https://1563-34-142-213-114.ngrok.io
+
+### Running in your PC
+
+```sh title="docker locally"
+docker run -it ubuntu
+```
+
+#### Into Docker
+
+```sh linenums="1" title="docker locally"
+apt-get update && apt-get install curl -y
+curl https://ollama.ai/install.sh | sh
 ```
 
 #### Highlighting lines
 
-``` py hl_lines="2 3"
-def bubble_sort(items):
-    for i in range(len(items)):
-        for j in range(len(items) - 1 - i):
-            if items[j] > items[j + 1]:
-                items[j], items[j + 1] = items[j + 1], items[j]
+```sh hl_lines="1" title="docker locally"
+export OLLAMA_HOST=https://1563-34-142-213-114.ngrok.io
+ollama list
+ollama run mistral
 ```
 
-## Icons and Emojs
+#### Finally
 
-:smile: 
-
-:fontawesome-regular-face-laugh-wink:
-
-:fontawesome-brands-twitter:{ .twitter }
-
-:octicons-heart-fill-24:{ .heart }
+> :smile: Now you can running ollama from you locally container with colab server and persistent models

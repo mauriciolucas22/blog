@@ -1,5 +1,5 @@
 site_name: ML Blog
-site_url: https://mauriciolucas22.github.io/blog
+site_url: https://mauriciolucas22.github.io
 theme:
   name: material
   features:
@@ -15,25 +15,21 @@ theme:
   language: en
   palette:
 
-    # Palette toggle for automatic mode
-    - media: "(prefers-color-scheme)"
-      toggle:
-        icon: material/brightness-auto
-        name: Switch to light mode
-
-    # Palette toggle for light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: default 
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-
-    # Palette toggle for dark mode (default)
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
+    # Defina o modo escuro como padrão
+    - scheme: slate
       toggle:
         icon: material/brightness-4
-        name: Switch to system preference
+        name: Modo Escuro
+
+    # Botão de alternância para o modo claro
+    - toggle:
+        icon: material/brightness-7
+        name: Modo Claro
+
+    # Botão de alternância para o modo escuro
+    - toggle:
+        icon: material/brightness-4
+        name: Modo Escuro
 
 plugins:
   - social
